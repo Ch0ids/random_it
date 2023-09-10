@@ -2,21 +2,20 @@
 
 namespace RandomIt
 {
-    public class Processs
+    public class Action
     {
         static List<Vocabulary> jpWords = new();
 
-        public static void GetDataFromExcel()
+        public static void GetDataFromExcel(int startWord, int endWord)
         {
             try
             {
                 ExcelPackage xlPackage = new ExcelPackage(new FileInfo(@"D:\Documents\日本語\Mimikara.xlsx"));
 
                 var myWorksheet = xlPackage.Workbook.Worksheets.ElementAt(0); //select sheet here
-                var totalRows = myWorksheet.Dimension.End.Row;
                 var totalColumns = myWorksheet.Dimension.End.Column;
 
-                for (int rowNum = 2; rowNum <= totalRows; rowNum++) //select starting row here
+                for (int rowNum = startWord; rowNum <= endWord; rowNum++) //select starting row here
                 {
                     var row = myWorksheet.Cells[rowNum, 2, rowNum, totalColumns].Select(c => c.Value == null ? string.Empty : c.Value.ToString()).ToList();
                     jpWords.Add(new Vocabulary
@@ -34,9 +33,9 @@ namespace RandomIt
             }
         }
 
-        public static void GetAll()
+        public static void ShowAll()
         {
-            if (jpWords.Count == 0) Console.WriteLine("No data found!");
+            if (jpWords.Count == 0) Console.WriteLine("（⁉）No data found");
             else
             {
                 jpWords.ForEach(w => Console.WriteLine("Kanji: {0}, Hiragana: {1}, Definition: {2}", w.Term, w.ExtraExplanation, w.Definition));
@@ -59,32 +58,40 @@ namespace RandomIt
 
             switch (choice)
             {
-                case 1://Hiragana_to_Kanji
+                case 3://Hiragana_to_Kanji
                     jpWords.ForEach(w =>
                     {
-                        Console.WriteLine("Hiragana: {0}", w.ExtraExplanation);
-                        Thread.Sleep(10000);
-                        Console.WriteLine("Kanji: {0}", w.Term);
-                        Thread.Sleep(1000);
-                    });
-                    break;
-                case 2://Definition_to_Kanji
-                    jpWords.ForEach(w =>
-                    {
-                        Console.WriteLine("Definition: {0}", w.Definition);
-                        Thread.Sleep(10000);
-                        Console.WriteLine("Kanji: {0}", w.Term);
-                        Thread.Sleep(1000);
-                    });
-                    break;
-                case 3://Kanji_to_Hiragana_and_Definition
-                    jpWords.ForEach(w =>
-                    {
-                        Console.WriteLine("Kanji: {0}", w.Term);
+                        Console.Write("Hiragana: {0}", w.ExtraExplanation);
                         Thread.Sleep(8000);
-                        Console.WriteLine("Hiragana: {0}, Definition: {1}", w.ExtraExplanation, w.Definition);
+                        
+                        Console.WriteLine("=> Kanji: {0} \n", w.Term);
                         Thread.Sleep(1000);
                     });
+                    break;
+                case 1://Definition_to_Kanji_and_Hira
+                    jpWords.ForEach(w =>
+                    {
+                        Console.Write("Definition: {0}", w.Definition);
+                        Thread.Sleep(5000);
+
+                        Console.Write("=> Hira: {0}", w.ExtraExplanation);
+                        Thread.Sleep(3000);
+
+                        Console.WriteLine("=> Kanji: {0} \n", w.Term);
+                        Thread.Sleep(1000);
+                    });
+                    break;
+                case 2://Kanji_to_Hirag_and_Definition
+                    jpWords.ForEach(w =>
+                    {
+                        Console.Write("Kanji: {0}", w.Term);
+                        Thread.Sleep(8000);
+
+                        Console.WriteLine("=> Hiragana: {0}, Definition: {1} \n", w.ExtraExplanation, w.Definition);
+                        Thread.Sleep(1000);
+                    });
+                    break;
+                case 4:
                     break;
                 default:
                     Console.WriteLine("Unsupported options");

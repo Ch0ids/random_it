@@ -12,11 +12,11 @@ namespace RandomIt
                 "CSV"
             };
 
-        static string[] CheckOptions = 
+        static string[] CheckOptions =
             {
+                "Definition_to_Kanji_and_Hira",
+                "Kanji_to_Hirag_and_Definition",
                 "Hiragana_to_Kanji",
-                "Definition_to_Kanji",
-                "Kanji_to_Hiragana_and_Definition",
                 "Back"
             };
 
@@ -42,21 +42,39 @@ namespace RandomIt
                     menu.AppendLine();
                 }
                 Console.WriteLine(menu.ToString());
-                Console.Write("Your choice? ");
+                Console.Write("(❓) Your choice: ");
                 userChoice = int.Parse(Console.ReadLine());
                 switch (userChoice)
                 {
                     case 1:
-                        Processs.GetDataFromExcel();
+                        Console.Write("Please insert the two limitations of the list (format:[value1] [value2]): ");
+                        string? input = Console.ReadLine();
+
+                        string[] values =
+                            input == null ? Array.Empty<string>() : input.Split(' ');
+                        Array.Sort(values);
+
+                        int startRow, endRow;
+
+                        if (int.TryParse(values[0], out startRow) & int.TryParse(values[1], out endRow))
+                        {
+                            Action.GetDataFromExcel(startRow + 1, endRow + 1);
+                        }
+                        else
+                        {
+                            Console.WriteLine("(⁉) Invalid input");
+                        }
+
+                        
                         break;
                     case 2:
-                        Processs.GetAll();
+                        Action.ShowAll();
                         break;
                     case 3:
                         int subUserChoice;
                         //create submenu (List in List to store the submenu of each choice and access the list of submenus by the choice number)
                         var submenu = new StringBuilder();
-                        submenu.AppendLine("\n3. Check_it?");
+                        submenu.AppendLine("\n（❓）3. Check_it");
                         for (int i = 1; i <= operationOptions.Length; i++)
                         {
                             submenu.AppendFormat("   {0}. {1}", i, CheckOptions[i - 1]);
@@ -64,7 +82,7 @@ namespace RandomIt
                         }
                         Console.WriteLine(submenu.ToString());
                         subUserChoice = int.Parse(Console.ReadLine());
-                        Processs.CheckIt(subUserChoice);
+                        Action.CheckIt(subUserChoice);
                         break;
                 }
                 Console.WriteLine();
